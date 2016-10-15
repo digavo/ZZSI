@@ -24,7 +24,7 @@ namespace ZZ
         private void button1_Click(object sender, EventArgs e)
         {
             OpenFileDialog oknoWyboruPliku = new OpenFileDialog();
-            //oknoWyboruPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+            oknoWyboruPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
 
             oknoWyboruPliku.Filter = "Wszystkie obrazy|*.bmp;*.jpg;*.jpeg;*.png|"
                                    + "BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png";
@@ -51,12 +51,44 @@ namespace ZZ
         {
             if (obrazek == null)
                 return;
-            pictureBox1.Image = obrazek.filtr();
+            pictureBox1.Image = obrazek.Filtr();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (obrazek == null)
+                return;
+            SaveFileDialog oknoZapisuPliku = new SaveFileDialog();
+            oknoZapisuPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+            oknoZapisuPliku.Filter = "BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png";
+            oknoZapisuPliku.Title = "Zapisz obraz";
+            oknoZapisuPliku.FileName = "";
+            oknoZapisuPliku.RestoreDirectory = true;
+            if (oknoZapisuPliku.ShowDialog() == DialogResult.OK)
+            {
+                switch (oknoZapisuPliku.FilterIndex)
+                {
+                    case 1:
+                        pictureBox1.Image.Save(oknoZapisuPliku.FileName,System.Drawing.Imaging.ImageFormat.Bmp);
+                        break;
+                    case 2:
+                        pictureBox1.Image.Save(oknoZapisuPliku.FileName, System.Drawing.Imaging.ImageFormat.Gif);
+                        break;
+                    case 3:
+                        pictureBox1.Image.Save(oknoZapisuPliku.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        break;
+                    case 4:
+                        pictureBox1.Image.Save(oknoZapisuPliku.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                        break;
+                }
+            }
+        }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (obrazek == null)
+                return;
+            pictureBox1.Image = obrazek.Contrast();
         }
     }
 }
