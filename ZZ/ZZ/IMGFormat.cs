@@ -111,7 +111,7 @@ namespace ZZ
                 for (int j = 0; j < newImg.Height; j++)
                 {
                     c = newImg.GetPixel(i, j);
-                    double pR = c.R / 255.0;
+                    double pR = c.R / 255.0; ;
                     pR -= 0.5;
                     pR *= contrast;
                     pR += 0.5;
