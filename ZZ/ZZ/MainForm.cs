@@ -90,5 +90,15 @@ namespace ZZ
                 return;
             pictureBox1.Image = obrazek.Contrast();
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                pictureBox1.Image = obrazek.takietam();
+                MessageBox.Show("Sukces");
+            }
+            catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
+        }
     }
 }
