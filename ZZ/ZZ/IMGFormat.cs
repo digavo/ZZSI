@@ -11,55 +11,6 @@ namespace ZZ
     class IMGFormat
     {
         public Bitmap Img;
-        // nagłówek pliku
-        /*char[] ID = new char[2];
-        UInt32 FileSize;
-        UInt16 Reserved1;
-        UInt16 Reserved2;
-        UInt32 Offset;
-        // informacje bitmapy
-        UInt32 BMPInfoSize;
-        Int32 Width;
-        Int32 Height;
-        UInt16 Planes;
-        UInt16 BitCount;
-        UInt32 Compression;
-        UInt32 SizeImage;
-        Int32 XPelsPerMeter;
-        Int32 YPelsPerMeter;
-        UInt32 ColorsUsed;
-        UInt32 ColorsImportant;
-        
-        public void CzytajNaglowek(BinaryReader plik)
-        {
-            ID = plik.ReadChars(2);
-            FileSize = plik.ReadUInt32();
-            Reserved1 = plik.ReadUInt16();
-            Reserved2 = plik.ReadUInt16();
-            Offset = plik.ReadUInt32();
-            BMPInfoSize = plik.ReadUInt32();
-            Width = plik.ReadInt32();
-            Height = plik.ReadInt32();
-            Planes = plik.ReadUInt16();
-            BitCount = plik.ReadUInt16();
-            Compression = plik.ReadUInt32();
-            SizeImage = plik.ReadUInt32();
-            XPelsPerMeter = plik.ReadInt32();
-            YPelsPerMeter = plik.ReadInt32();
-            ColorsUsed = plik.ReadUInt32();
-            ColorsImportant = plik.ReadUInt32();
-        }
-        public String[] WypiszNaglowek()
-        {
-            String[] tekst = new String[2];
-            tekst[0] = String.Format("Nagłówek pliku BMP:\n Typ:\n Rozmiar danych:\n Zarezerwowane:\n Zarezerwowane:\n Przesuniecie danych:\n Opis: \n" +
-                "      Rozmiar:\n      Szerokość [px]:\n      Wysokość [px]:\n      Płaszczyzna:\n      Liczba bitów na piksel:\n      Typ kompresji:\n" +
-                "      Rozmiar mapy:\n      Rozdzielczość X:\n      Rozdzielczość Y:\n      Liczba użytych kolorów:\n      Liczba kolorów wymaganych:\n");
-            tekst[1] = String.Format("\n{0}\n{1}\n{2}\n{3}\n{4}\n\n{5}\n{6}\n{7}\n{8}\n{9}\n{10}\n{11}\n{12}\n{13}\n{14}\n{15}\n",
-                new string(ID), FileSize, Reserved1, Reserved2, Offset, BMPInfoSize, Width, Height, Planes, BitCount, Compression, SizeImage,
-                XPelsPerMeter, YPelsPerMeter, ColorsUsed, ColorsImportant);
-            return tekst;
-        }*/
         public void CzytajObraz(Stream str)
         {
             Img = new Bitmap(str);
@@ -81,7 +32,6 @@ namespace ZZ
                         int pixelB = 255;
                         newImg.SetPixel(i, j, Color.FromArgb((byte)pixelR,(byte)pixelG, (byte)pixelB));
                     }
-
                     /*int pixelR = c.R;
                     int pixelG = c.G - 255;
                     int pixelB = c.B - 255; 
@@ -111,7 +61,7 @@ namespace ZZ
                 for (int j = 0; j < newImg.Height; j++)
                 {
                     c = newImg.GetPixel(i, j);
-                    double pR = c.R / 255.0; ;
+                    double pR = c.R / 255.0;
                     pR -= 0.5;
                     pR *= contrast;
                     pR += 0.5;
