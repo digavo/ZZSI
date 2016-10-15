@@ -64,7 +64,7 @@ namespace ZZ
         {
             Img = new Bitmap(str);
         }
-        public Bitmap Filtr ()
+        public Bitmap Filtr () //super udało sie
         {
             Bitmap newImg = new Bitmap(Img);
             Color c;
@@ -81,6 +81,7 @@ namespace ZZ
                         int pixelB = 255;
                         newImg.SetPixel(i, j, Color.FromArgb((byte)pixelR,(byte)pixelG, (byte)pixelB));
                     }
+
                     /*int pixelR = c.R;
                     int pixelG = c.G - 255;
                     int pixelB = c.B - 255; 
