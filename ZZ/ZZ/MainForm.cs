@@ -111,5 +111,13 @@ namespace ZZ
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
 
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                pictureBox1.Image = obrazek.ZnajdzNiebieskiWielowatkowo();
+            }
+            catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
+        }
     }
 }
