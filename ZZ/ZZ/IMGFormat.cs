@@ -14,8 +14,8 @@ namespace ZZ
         public Bitmap Img;
         public Bitmap KoncowyImg1; // obraz wynikowy 1
         public Bitmap KoncowyImg2; // obraz wynikowy 2
-        public Bitmap KoncowyImg3; // obraz wynikowy 3
-        public Bitmap KoncowyImg4; // obraz wynikowy 4
+        //public Bitmap KoncowyImg3; // obraz wynikowy 3
+        //public Bitmap KoncowyImg4; // obraz wynikowy 4
         public void CzytajObraz(Stream str)
         {
             Img = new Bitmap(str);
