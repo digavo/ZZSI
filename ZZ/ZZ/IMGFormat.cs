@@ -12,10 +12,10 @@ namespace ZZ
     class IMGFormat
     {
         public Bitmap Img;
-        public Bitmap KoncowyImg1; // obraz wynikowy 1
-        public Bitmap KoncowyImg2; // obraz wynikowy 2
-        //public Bitmap KoncowyImg3; // obraz wynikowy 3
-        //public Bitmap KoncowyImg4; // obraz wynikowy 4
+
+        public Bitmap KoncowyImg; // obraz wynikowy 
+        private static readonly object Imglock = new object(); // mechanizm lock
+
         public void CzytajObraz(Stream str)
         {
             Img = new Bitmap(str);
@@ -176,62 +176,105 @@ namespace ZZ
         }
  
         public void watek1()
-        {
-            Bitmap kopiaImg = new Bitmap(Img);
-            Color c;
-            //zmieniamy kopie na pomaranczowy
-            for (int i = 0; i < kopiaImg.Width/2; i++)
+        { 
+            int maxw = 0;
+            int maxh = 0;
+            lock (Imglock)
             {
-                for (int j = 0; j < kopiaImg.Height; j++)
-                {
-                    c = kopiaImg.GetPixel(i, j);
-                    kopiaImg.SetPixel(i, j, zmienpikselek(c));
-                }
+               maxw = KoncowyImg.Width;
+               maxh = KoncowyImg.Height;
             }
-            KoncowyImg1 = kopiaImg;
+
+                for (int i = 0; i < maxw / 2; i++)
+                {
+                    for (int j = 0; j < maxh / 2; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
         }
         public void watek2()
         {
-            Bitmap kopiaImg = new Bitmap(Img);
-            Color c;
-            //zmieniamy kopie na pomaranczowy
-            for (int i = kopiaImg.Width/2; i < kopiaImg.Width; i++)
+            int maxw = 0;
+            int maxh = 0;
+            lock (Imglock)
             {
-                for (int j = 0; j < kopiaImg.Height; j++)
-                {
-                    c = kopiaImg.GetPixel(i, j);
-                    kopiaImg.SetPixel(i, j, zmienpikselek(c));
-                }
+                maxw = KoncowyImg.Width;
+                maxh = KoncowyImg.Height;
             }
-            KoncowyImg2 = kopiaImg;
+
+                for (int i = maxw / 2; i < maxw; i++)
+                {
+                    for (int j = 0; j < maxh / 2; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
         }
-       
+        public void watek3()
+        {
+            int maxw = 0;
+            int maxh = 0;
+            lock (Imglock)
+            {
+                maxw = KoncowyImg.Width;
+                maxh = KoncowyImg.Height;
+            }
+
+                for (int i = 0; i < maxw / 2; i++)
+                {
+                    for (int j = maxh / 2; j < maxh; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
+        }
+        public void watek4()
+        {
+            int maxw = 0;
+            int maxh = 0;
+            lock (Imglock)
+            {
+                maxw = KoncowyImg.Width;
+                maxh = KoncowyImg.Height;
+            }
+                for (int i = maxw / 2; i < maxw; i++)
+                {
+                    for (int j = maxh / 2; j < maxh; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
+        }
 
         public Bitmap ZnajdzNiebieskiWielowatkowo()
         {
+            KoncowyImg = new Bitmap(Img);
             Thread thread1 = new Thread(watek1);
             Thread thread2 = new Thread(watek2);
-            //Thread thread3 = new Thread(watek3);
-            //Thread thread4 = new Thread(watek4);
+            Thread thread3 = new Thread(watek3);
+            Thread thread4 = new Thread(watek4);
             thread1.Start();
             thread2.Start();
-            //thread3.Start();
-            //thread4.Start();
-            thread1.Join(); //czekanie na zakonczenie watku 1
+            thread3.Start();
+            thread4.Start();
+            thread1.Join();  //czekanie na zakonczenie watku 1
             thread2.Join();  //czekanie na zakonczenie watku 2
-
-            //laczenie obrazow wynikowych z watkow w jedna calosc
-            Bitmap kopiaImg = new Bitmap(Img);
-            for (int i = 0; i < kopiaImg.Width / 2; i++)
-            {
-                for (int j = 0; j < kopiaImg.Height; j++)
-                {
-                    kopiaImg.SetPixel(i, j, KoncowyImg1.GetPixel(i, j));                                            //laczenie obrazow z watku 1
-                    kopiaImg.SetPixel(kopiaImg.Width / 2+i, j, KoncowyImg2.GetPixel(kopiaImg.Width / 2 + i, j));    //laczenie obrazow z watku 2
-                }
-            }
-            
-            return kopiaImg;// i zwracamy pomaranczowy obraz z niebieskim wyostrzonym
+            thread3.Join();  //czekanie na zakonczenie watku 3
+            thread4.Join();  //czekanie na zakonczenie watku 4
+            return KoncowyImg;// zwracamy pomaranczowy obraz z niebieskim wyostrzonym
         }
     }
 }
