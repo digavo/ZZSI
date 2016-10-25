@@ -154,6 +154,35 @@ namespace ZZ
  
         public void watek1()
         { 
+                for (int i = 0; i < maxw ; i++)
+                {
+                    for (int j = 0; j < maxh / 2; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
+        }
+        public void watek3()
+        {
+                for (int i = 0; i < maxw ; i++)
+                {
+                    for (int j = maxh / 2; j < maxh; j++)
+                    {
+                        lock (Imglock)
+                        {
+                            KoncowyImg.SetPixel(i, j, zmienpikselek(KoncowyImg.GetPixel(i, j)));
+                        }
+                    }
+                }
+        }
+
+
+        /*
+             public void watek1()
+        { 
                 for (int i = 0; i < maxw / 2; i++)
                 {
                     for (int j = 0; j < maxh / 2; j++)
@@ -180,7 +209,7 @@ namespace ZZ
         }
         public void watek3()
         {
-                for (int i = 0; i < maxw / 2; i++)
+                for (int i = 0; i < maxw ; i++)// /2
                 {
                     for (int j = maxh / 2; j < maxh; j++)
                     {
@@ -204,6 +233,7 @@ namespace ZZ
                     }
                 }
         }
+         * */
 
         public Bitmap ZnajdzNiebieskiWielowatkowo()
         {
@@ -211,17 +241,11 @@ namespace ZZ
             maxw = KoncowyImg.Width;
             maxh = KoncowyImg.Height;
             Thread thread1 = new Thread(watek1);
-            Thread thread2 = new Thread(watek2);
             Thread thread3 = new Thread(watek3);
-            Thread thread4 = new Thread(watek4);
             thread1.Start();
-            thread2.Start();
             thread3.Start();
-            thread4.Start();
             thread1.Join();  //czekanie na zakonczenie watku 1
-            thread2.Join();  //czekanie na zakonczenie watku 2
             thread3.Join();  //czekanie na zakonczenie watku 3
-            thread4.Join();  //czekanie na zakonczenie watku 4
             return KoncowyImg;// zwracamy pomaranczowy obraz z niebieskim wyostrzonym
         }
     }
