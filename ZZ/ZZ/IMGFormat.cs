@@ -110,41 +110,16 @@ namespace ZZ
         }
         public Bitmap ZnajdzNiebieski() 
         {
-            Bitmap kopiaImg = new Bitmap(Img);
-            Color c;
+            Bitmap orginal = new Bitmap(Img);
             //zmieniamy kopie na pomaranczowy
-            for (int i = 0; i < kopiaImg.Width; i++)
+            for (int i = 0; i < orginal.Width; i++)
             {
-                for (int j = 0; j < kopiaImg.Height; j++)
+                for (int j = 0; j < orginal.Height; j++)
                 {
-                    c = kopiaImg.GetPixel(i, j);
-                    int pixelR, pixelG, pixelB;
-                    float hue = c.GetHue();
-                    float sat = c.GetSaturation();
-                    float bri = c.GetBrightness();
-                    if ((160 < hue && hue < 330 && bri > 0.30 && bri < 0.75 && sat > 0.35))
-                    // 160-300 jasny niebieski,niebieski, niebiesko-fioletowy
-                    {
-                        pixelR = 0;
-                        pixelG = 0;
-                        pixelB = 255;// wyostrzamy niebieski
-                    }
-                    else
-                    {
-                        pixelR = c.R;
-                        pixelG = c.G - 127;
-                        pixelB = c.B - 255;
-                        pixelR = Math.Max(pixelR, 0);
-                        pixelR = Math.Min(255, pixelR);
-                        pixelG = Math.Max(pixelG, 0);
-                        pixelG = Math.Min(255, pixelG);
-                        pixelB = Math.Max(pixelB, 0);
-                        pixelB = Math.Min(255, pixelB);
-                    }
-                    kopiaImg.SetPixel(i, j, Color.FromArgb((byte)pixelR, (byte)pixelG, (byte)pixelB));
+                    orginal.SetPixel(i, j, zmienpikselek(orginal.GetPixel(i, j)));
                 }
             }
-            return kopiaImg;// i zwracamy pomaranczowy obraz z niebieskim wyostrzonym
+            return orginal;// i zwracamy pomaranczowy obraz z niebieskim wyostrzonym
         }
 
         public Color zmienpikselek(Color c) //  sprawdzenie piksela i zmiana jego koloru na niebieski lub odcien pomaranczowego 
