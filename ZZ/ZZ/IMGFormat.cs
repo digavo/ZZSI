@@ -15,6 +15,8 @@ namespace ZZ
 
         public Bitmap KoncowyImg; // obraz wynikowy 
         private static readonly object Imglock = new object(); // mechanizm lock
+        public int maxh;
+        public int maxw;
 
         public void CzytajObraz(Stream str)
         {
@@ -152,14 +154,6 @@ namespace ZZ
  
         public void watek1()
         { 
-            int maxw = 0;
-            int maxh = 0;
-            lock (Imglock)
-            {
-               maxw = KoncowyImg.Width;
-               maxh = KoncowyImg.Height;
-            }
-
                 for (int i = 0; i < maxw / 2; i++)
                 {
                     for (int j = 0; j < maxh / 2; j++)
@@ -173,14 +167,6 @@ namespace ZZ
         }
         public void watek2()
         {
-            int maxw = 0;
-            int maxh = 0;
-            lock (Imglock)
-            {
-                maxw = KoncowyImg.Width;
-                maxh = KoncowyImg.Height;
-            }
-
                 for (int i = maxw / 2; i < maxw; i++)
                 {
                     for (int j = 0; j < maxh / 2; j++)
@@ -194,14 +180,6 @@ namespace ZZ
         }
         public void watek3()
         {
-            int maxw = 0;
-            int maxh = 0;
-            lock (Imglock)
-            {
-                maxw = KoncowyImg.Width;
-                maxh = KoncowyImg.Height;
-            }
-
                 for (int i = 0; i < maxw / 2; i++)
                 {
                     for (int j = maxh / 2; j < maxh; j++)
@@ -215,13 +193,6 @@ namespace ZZ
         }
         public void watek4()
         {
-            int maxw = 0;
-            int maxh = 0;
-            lock (Imglock)
-            {
-                maxw = KoncowyImg.Width;
-                maxh = KoncowyImg.Height;
-            }
                 for (int i = maxw / 2; i < maxw; i++)
                 {
                     for (int j = maxh / 2; j < maxh; j++)
@@ -237,6 +208,8 @@ namespace ZZ
         public Bitmap ZnajdzNiebieskiWielowatkowo()
         {
             KoncowyImg = new Bitmap(Img);
+            maxw = KoncowyImg.Width;
+            maxh = KoncowyImg.Height;
             Thread thread1 = new Thread(watek1);
             Thread thread2 = new Thread(watek2);
             Thread thread3 = new Thread(watek3);
