@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using System.Threading; 
+using System.Threading;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace ZZ
 {
@@ -22,27 +24,76 @@ namespace ZZ
         {
             Img = new Bitmap(str);
         }
-        public Bitmap ZnajdzKolor () 
+
+        private void ZnajdzKolor (byte[] tab, int x1, int y1, int x2, int y2, int width, int depth) //Daga
         {
-            Bitmap newImg = new Bitmap(Img);
-            Color c;
-            for (int i = 0; i < newImg.Width; i++)
+            for (int i = x1; i < x2; i++)
             {
-                for (int j = 0; j < newImg.Height; j++)
+                for (int j = y1; j < y2; j++)
                 {
-                    c = newImg.GetPixel(i, j);
-                    float hue = c.GetHue();
-                    if (hue<290 && hue>170) //niebieski 270-170
+                    int offset = ((j * width) + i) * depth;
+                    float hue, sat, bri;
+                    RGBtoHSL(tab[offset + 2], tab[offset + 1], tab[offset + 0], out hue, out bri, out sat);
+                    int pixelR, pixelG, pixelB;
+                    if (160 < hue && hue < 300 && bri > 0.20 && sat > 0.10 && sat>(-bri+0.7))
                     {
-                        int pixelR = 255;
-                        int pixelG = 255;
-                        int pixelB = 255;
-                        newImg.SetPixel(i, j, Color.FromArgb((byte)pixelR,(byte)pixelG, (byte)pixelB));
+                        pixelR = 0;
+                        pixelG = 0;
+                        pixelB = 255;
                     }
+                    else
+                    {
+                        pixelR = tab[offset + 2];
+                        pixelG = tab[offset + 1] - 127;
+                        pixelB = tab[offset + 0] - 255;
+                        pixelG = Math.Max(pixelG, 0);
+                        pixelB = Math.Max(pixelB, 0);
+                    }
+                    tab[offset + 2] = (byte)pixelR;
+                    tab[offset + 1] = (byte)pixelG;
+                    tab[offset + 0] = (byte)pixelB;
                 }
             }
+        }
+        private void RGBtoHSL(int r, int g, int b, out float Hue, out float Bri, out float Sat)
+        {
+            float R = (float)r / 255, G = (float)g / 255, B = (float)b / 255;
+            float cmax = Math.Max(R, Math.Max(G, B));
+            float cmin = Math.Min(R, Math.Min(G, B));
+            float delta = cmax - cmin;
+            Bri = (cmax + cmin) / 2;
+            if (delta == 0) { Hue = 0; Sat = 0; }
+            else
+            {
+                Sat = delta / (1 - Math.Abs(2 * Bri - 1));
+                if (cmax == R)
+                    Hue = 60 * ((G - B) / delta) % 6;
+                else if (cmax == G)
+                    Hue = 60 * ((B - R) / delta + 2);
+                else Hue = 60 * ((R - G) / delta + 4);
+            }
+            //System.Windows.Forms.MessageBox.Show("r:" + r + " g:" + g + " b:" + b + "\nR:" + R + " G:" + G + " B:" + B + "\nH:" + Hue + " Br:" + Bri + " Sa:" + Sat);
+        } //Daga
+        public Bitmap ZnajdzKolorSzybko() //Daga
+        {
+            Bitmap newImg = new Bitmap(Img);
+            Rectangle rect = new Rectangle(0, 0, newImg.Width, newImg.Height);
+            BitmapData data = newImg.LockBits(rect, ImageLockMode.ReadOnly, newImg.PixelFormat);
+            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8;
+            byte[] buffer = new byte[data.Width * data.Height * depth];
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
+            //asynchroniczne wywołanie wątków
+            Parallel.Invoke(
+                () => { ZnajdzKolor(buffer, 0, 0, data.Width / 2, data.Height / 2, data.Width, depth); }, //top left
+                () => { ZnajdzKolor(buffer, data.Width / 2, 0, data.Width, data.Height, data.Width, depth); }, //top - right
+                () => { ZnajdzKolor(buffer, 0, data.Height / 2, data.Width, data.Height, data.Width, depth); }, //bottom - left
+                () => { ZnajdzKolor(buffer, data.Width / 2, data.Height / 2, data.Width, data.Height, data.Width, depth); }  //bottom - right
+            );
+            Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
+            newImg.UnlockBits(data);
             return newImg;
         }
+
         public Bitmap Filtr()
         {
             Bitmap newImg = new Bitmap(Img);
@@ -55,12 +106,8 @@ namespace ZZ
                     int pixelR = c.R;
                     int pixelG = c.G - 127;
                     int pixelB = c.B - 255;
-                    pixelR = Math.Max(pixelR, 0);
-                    pixelR = Math.Min(255, pixelR);
                     pixelG = Math.Max(pixelG, 0);
-                    pixelG = Math.Min(255, pixelG);
                     pixelB = Math.Max(pixelB, 0);
-                    pixelB = Math.Min(255, pixelB);
 
                     newImg.SetPixel(i, j, Color.FromArgb((byte)pixelR, (byte)pixelG, (byte)pixelB));
                 }
@@ -110,6 +157,7 @@ namespace ZZ
             }
             return newImg;
         }
+
         public Bitmap ZnajdzNiebieski() 
         {
             Bitmap orginal = new Bitmap(Img);

@@ -110,7 +110,11 @@ namespace ZZ
         {
             try
             {
-                pictureBox1.Image = obrazek.ZnajdzKolor();
+                DateTime startTime = DateTime.Now;
+                pictureBox1.Image = obrazek.ZnajdzKolorSzybko();
+                DateTime stopTime = DateTime.Now;
+                TimeSpan roznica = stopTime - startTime;
+                System.Windows.Forms.MessageBox.Show("Czas pracy: " + roznica.TotalMilliseconds.ToString() + " ms");
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
@@ -126,6 +130,11 @@ namespace ZZ
                 System.Windows.Forms.MessageBox.Show("Czas pracy: " + roznica.TotalMilliseconds.ToString() + " ms");
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = obrazek.Img;
         }
     }
 }
