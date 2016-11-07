@@ -14,6 +14,8 @@ namespace ZZ
     class IMGFormat
     {
         public Bitmap Img;
+        public int MaxHue = 300, MinHue = 160;
+        public double MinVal = 0.20, MinSat = 0.20;
 
         public Bitmap KoncowyImg; // obraz wynikowy 
         private static readonly object Imglock = new object(); // mechanizm lock
@@ -24,6 +26,27 @@ namespace ZZ
         {
             Img = new Bitmap(str);
         }
+        private void RGBtoHSV(int r, int g, int b, out float Hue, out float Val, out float Sat)//Daga
+        {
+            float R = (float)r, G = (float)g, B = (float)b;
+            float cmax = Math.Max(R, Math.Max(G, B));
+            float cmin = Math.Min(R, Math.Min(G, B));
+            float delta = cmax - cmin;
+            if (cmin == cmax) Hue = 0;
+            else 
+            {
+                if (cmax == R)
+                    Hue = ((G - B) * 60) / delta;
+                else if (cmax == G)
+                    Hue = 120 + ((B - R) * 60) / delta;
+                else Hue = 240 + ((R - G) * 60) / delta;
+            }
+            if (Hue < 0) Hue = Hue + 360;
+            if (cmax == 0) Sat = 0;
+            else Sat = (delta * 100) / cmax;
+            Val = (100 * cmax) / 255;
+            //System.Windows.Forms.MessageBox.Show("r:" + r + " g:" + g + " b:" + b + "\nR:" + R + " G:" + G + " B:" + B + "\nH:" + Hue + " V:" + Val + " Sa:" + Sat);
+        }
 
         private void ZnajdzKolor (byte[] tab, int x1, int y1, int x2, int y2, int width, int depth) //Daga
         {
@@ -32,10 +55,10 @@ namespace ZZ
                 for (int j = y1; j < y2; j++)
                 {
                     int offset = ((j * width) + i) * depth;
-                    float hue, sat, bri;
-                    RGBtoHSL(tab[offset + 2], tab[offset + 1], tab[offset + 0], out hue, out bri, out sat);
+                    float hue, sat, val;
+                    RGBtoHSV(tab[offset + 2], tab[offset + 1], tab[offset + 0], out hue, out val, out sat);
                     int pixelR, pixelG, pixelB;
-                    if (160 < hue && hue < 300 && bri > 0.20 && sat > 0.10 && sat>(-bri+0.7))
+                    if (hue > MinHue && hue < MaxHue && val > MinVal && sat > MinSat )
                     {
                         pixelR = 0;
                         pixelG = 0;
@@ -55,38 +78,20 @@ namespace ZZ
                 }
             }
         }
-        private void RGBtoHSL(int r, int g, int b, out float Hue, out float Bri, out float Sat)
-        {
-            float R = (float)r / 255, G = (float)g / 255, B = (float)b / 255;
-            float cmax = Math.Max(R, Math.Max(G, B));
-            float cmin = Math.Min(R, Math.Min(G, B));
-            float delta = cmax - cmin;
-            Bri = (cmax + cmin) / 2;
-            if (delta == 0) { Hue = 0; Sat = 0; }
-            else
-            {
-                Sat = delta / (1 - Math.Abs(2 * Bri - 1));
-                if (cmax == R)
-                    Hue = 60 * ((G - B) / delta) % 6;
-                else if (cmax == G)
-                    Hue = 60 * ((B - R) / delta + 2);
-                else Hue = 60 * ((R - G) / delta + 4);
-            }
-            //System.Windows.Forms.MessageBox.Show("r:" + r + " g:" + g + " b:" + b + "\nR:" + R + " G:" + G + " B:" + B + "\nH:" + Hue + " Br:" + Bri + " Sa:" + Sat);
-        } //Daga
-        public Bitmap ZnajdzKolorSzybko() //Daga
+        public Bitmap ZnajdzKolorWatki() //Daga
         {
             Bitmap newImg = new Bitmap(Img);
             Rectangle rect = new Rectangle(0, 0, newImg.Width, newImg.Height);
-            BitmapData data = newImg.LockBits(rect, ImageLockMode.ReadOnly, newImg.PixelFormat);
-            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8;
+            BitmapData data = newImg.LockBits(rect, ImageLockMode.ReadOnly, newImg.PixelFormat); //lepsza wydajnośc w dużej skali od bitmap.GetPixel itp
+            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8; // 32 / 8 = 4
             byte[] buffer = new byte[data.Width * data.Height * depth];
-            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
-            //asynchroniczne wywołanie wątków
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length); //kopiowanie bloku pamięci niezarządzanej 
+            //asynchroniczne wywołanie wątków na wspólnych danych
+            //Note that with Invoke, you simply express which actions you want to run concurrently, and the runtime handles all thread scheduling details, including scaling automatically to the number of cores on the host computer.
             Parallel.Invoke(
                 () => { ZnajdzKolor(buffer, 0, 0, data.Width / 2, data.Height / 2, data.Width, depth); }, //top left
-                () => { ZnajdzKolor(buffer, data.Width / 2, 0, data.Width, data.Height, data.Width, depth); }, //top - right
-                () => { ZnajdzKolor(buffer, 0, data.Height / 2, data.Width, data.Height, data.Width, depth); }, //bottom - left
+                () => { ZnajdzKolor(buffer, data.Width / 2, 0, data.Width, data.Height / 2, data.Width, depth); }, //top - right
+                () => { ZnajdzKolor(buffer, 0, data.Height / 2, data.Width / 2, data.Height, data.Width, depth); }, //bottom - left
                 () => { ZnajdzKolor(buffer, data.Width / 2, data.Height / 2, data.Width, data.Height, data.Width, depth); }  //bottom - right
             );
             Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
@@ -94,26 +99,45 @@ namespace ZZ
             return newImg;
         }
 
-        public Bitmap Filtr()
+        public void Filtr(byte[] tab, int x1, int y1, int x2, int y2, int width, int depth)
         {
-            Bitmap newImg = new Bitmap(Img);
-            Color c;
-            for (int i = 0; i < newImg.Width; i++)
+            for (int i = x1; i < x2; i++)
             {
-                for (int j = 0; j < newImg.Height; j++)
+                for (int j = y1; j < y2; j++)
                 {
-                    c = newImg.GetPixel(i, j);
-                    int pixelR = c.R;
-                    int pixelG = c.G - 127;
-                    int pixelB = c.B - 255;
+                    int offset = ((j * width) + i) * depth;
+                    int pixelR = tab[offset + 2];
+                    int pixelG = tab[offset + 1] - 127;
+                    int pixelB = tab[offset + 0] - 255;
                     pixelG = Math.Max(pixelG, 0);
                     pixelB = Math.Max(pixelB, 0);
-
-                    newImg.SetPixel(i, j, Color.FromArgb((byte)pixelR, (byte)pixelG, (byte)pixelB));
+                    tab[offset + 2] = (byte)pixelR;
+                    tab[offset + 1] = (byte)pixelG;
+                    tab[offset + 0] = (byte)pixelB;
                 }
             }
+        }
+        public Bitmap FiltrWatki()
+        {
+            Bitmap newImg = new Bitmap(Img);
+            Rectangle rect = new Rectangle(0, 0, newImg.Width, newImg.Height);
+            BitmapData data = newImg.LockBits(rect, ImageLockMode.ReadOnly, newImg.PixelFormat); //lepsza wydajnośc w dużej skali od bitmap.GetPixel itp
+            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8; // 32 / 8 = 4
+            byte[] buffer = new byte[data.Width * data.Height * depth];
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length); //kopiowanie bloku pamięci niezarządzanej 
+            //asynchroniczne wywołanie wątków na wspólnych danych
+            //Note that with Invoke, you simply express which actions you want to run concurrently, and the runtime handles all thread scheduling details, including scaling automatically to the number of cores on the host computer.
+            Parallel.Invoke(
+                () => { Filtr(buffer, 0, 0, data.Width / 2, data.Height / 2, data.Width, depth); }, //top left
+                () => { Filtr(buffer, data.Width / 2, 0, data.Width, data.Height / 2, data.Width, depth); }, //top - right
+                () => { Filtr(buffer, 0, data.Height / 2, data.Width / 2, data.Height, data.Width, depth); }, //bottom - left
+                () => { Filtr(buffer, data.Width / 2, data.Height / 2, data.Width, data.Height, data.Width, depth); }  //bottom - right
+            );
+            Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
+            newImg.UnlockBits(data);
             return newImg;
         }
+
         public Bitmap Kontrast () 
         {
             double contrast = 50; //-100 - 100

@@ -21,7 +21,7 @@ namespace ZZ
         {
             InitializeComponent();
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void Wczytaj_Click(object sender, EventArgs e)
         {
             OpenFileDialog oknoWyboruPliku = new OpenFileDialog();
             oknoWyboruPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -43,7 +43,7 @@ namespace ZZ
             }
         }
         
-        private void button2_Click(object sender, EventArgs e)
+        private void Zapisz_Click(object sender, EventArgs e)
         {
             SaveFileDialog oknoZapisuPliku = new SaveFileDialog();
             oknoZapisuPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -74,12 +74,21 @@ namespace ZZ
                 catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
             }
         }
-        
-        private void button3_Click(object sender, EventArgs e)
+
+        private void Oryginal_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = obrazek.Img;
+        }
+
+        private void Filtr_Click(object sender, EventArgs e)
         {
             try
             {
-                pictureBox1.Image = obrazek.Filtr();
+                DateTime startTime = DateTime.Now;
+                pictureBox1.Image = obrazek.FiltrWatki();
+                DateTime stopTime = DateTime.Now;
+                TimeSpan roznica = stopTime - startTime;
+                richTextBox1.Text = "Czas wykonania filtru: " + roznica.TotalMilliseconds.ToString() + " ms";
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
@@ -88,12 +97,16 @@ namespace ZZ
         {
             try
             {
+                DateTime startTime = DateTime.Now;
                 pictureBox1.Image = obrazek.Kontrast();
+                DateTime stopTime = DateTime.Now;
+                TimeSpan roznica = stopTime - startTime;
+                richTextBox1.Text = "Czas wykonania kontrastu: " + roznica.TotalMilliseconds.ToString() + " ms";
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ZnajdzNb1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -101,25 +114,25 @@ namespace ZZ
                 pictureBox1.Image = obrazek.ZnajdzNiebieski();
                 DateTime stopTime = DateTime.Now;
                 TimeSpan roznica = stopTime - startTime;
-                System.Windows.Forms.MessageBox.Show("Czas pracy: "+ roznica.TotalMilliseconds.ToString()+" ms");
+                richTextBox1.Text = "Czas wykonania operacji: " + roznica.TotalMilliseconds.ToString() + " ms";
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void ZnajdzNb2_Click(object sender, EventArgs e)
         {
             try
             {
                 DateTime startTime = DateTime.Now;
-                pictureBox1.Image = obrazek.ZnajdzKolorSzybko();
+                pictureBox1.Image = obrazek.ZnajdzKolorWatki();
                 DateTime stopTime = DateTime.Now;
                 TimeSpan roznica = stopTime - startTime;
-                System.Windows.Forms.MessageBox.Show("Czas pracy: " + roznica.TotalMilliseconds.ToString() + " ms");
+                richTextBox1.Text = "Czas wykonania operacji: " + roznica.TotalMilliseconds.ToString() + " ms";
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void ZnajdzNb3_Click(object sender, EventArgs e)
         {
             try
             {
@@ -127,14 +140,10 @@ namespace ZZ
                 pictureBox1.Image = obrazek.ZnajdzNiebieskiWielowatkowo();
                 DateTime stopTime = DateTime.Now;
                 TimeSpan roznica = stopTime - startTime;
-                System.Windows.Forms.MessageBox.Show("Czas pracy: " + roznica.TotalMilliseconds.ToString() + " ms");
+                richTextBox1.Text = "Czas wykonania operacji: " + roznica.TotalMilliseconds.ToString() + " ms";
             }
             catch { System.Windows.Forms.MessageBox.Show("Błąd. brak obrazka do wczytania!"); }
         }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
-            pictureBox1.Image = obrazek.Img;
-        }
+        
     }
 }
