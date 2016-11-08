@@ -33,7 +33,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -102,23 +101,12 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Zapisz_Click);
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(6, 59);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(188, 23);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "Kontrast";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.button7);
             this.groupBox1.Controls.Add(this.button5);
             this.groupBox1.Controls.Add(this.button6);
             this.groupBox1.Controls.Add(this.button3);
-            this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Location = new System.Drawing.Point(12, 55);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 214);
@@ -128,18 +116,19 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(6, 114);
+            this.button7.Location = new System.Drawing.Point(5, 186);
             this.button7.Margin = new System.Windows.Forms.Padding(2);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(188, 23);
             this.button7.TabIndex = 16;
             this.button7.Text = "Znajdz niebieski wielowatkowo";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Visible = false;
             this.button7.Click += new System.EventHandler(this.ZnajdzNb3_Click);
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(6, 87);
+            this.button5.Location = new System.Drawing.Point(6, 58);
             this.button5.Margin = new System.Windows.Forms.Padding(2);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(188, 23);
@@ -150,7 +139,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(6, 142);
+            this.button6.Location = new System.Drawing.Point(6, 86);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(188, 23);
             this.button6.TabIndex = 5;
@@ -204,7 +193,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;

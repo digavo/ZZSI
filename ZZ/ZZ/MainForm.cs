@@ -111,7 +111,7 @@ namespace ZZ
             try
             {
                 DateTime startTime = DateTime.Now;
-                pictureBox1.Image = obrazek.ZnajdzNiebieski();
+                pictureBox1.Image = obrazek.ZnajdzNiebieskiBez();
                 DateTime stopTime = DateTime.Now;
                 TimeSpan roznica = stopTime - startTime;
                 richTextBox1.Text = "Czas wykonania operacji: " + roznica.TotalMilliseconds.ToString() + " ms";

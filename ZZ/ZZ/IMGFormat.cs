@@ -58,7 +58,7 @@ namespace ZZ
                     float hue, sat, val;
                     RGBtoHSV(tab[offset + 2], tab[offset + 1], tab[offset + 0], out hue, out val, out sat);
                     int pixelR, pixelG, pixelB;
-                    if (hue > MinHue && hue < MaxHue && val > MinVal && sat > MinSat )
+                    if (hue > MinHue && hue < MaxHue && val > MinVal && sat > MinSat)
                     {
                         pixelR = 0;
                         pixelG = 0;
@@ -78,6 +78,22 @@ namespace ZZ
                 }
             }
         }
+
+        public Bitmap ZnajdzNiebieskiBez()
+        {
+            Bitmap newImg = new Bitmap(Img);
+            Rectangle rect = new Rectangle(0, 0, newImg.Width, newImg.Height);
+            BitmapData data = newImg.LockBits(rect, ImageLockMode.ReadOnly, newImg.PixelFormat); //lepsza wydajnośc w dużej skali od bitmap.GetPixel itp
+            int depth = Bitmap.GetPixelFormatSize(data.PixelFormat) / 8; // 32 / 8 = 4
+            byte[] buffer = new byte[data.Width * data.Height * depth];
+            Marshal.Copy(data.Scan0, buffer, 0, buffer.Length); //kopiowanie bloku pamięci niezarządzanej 
+            ZnajdzKolor(buffer, 0, 0, data.Width, data.Height, data.Width, depth);
+            Marshal.Copy(buffer, 0, data.Scan0, buffer.Length);
+            newImg.UnlockBits(data);
+            return newImg;
+        }
+        //raport tytuł, problem zarządzania opisać, i jak realizujemy, plik - opis, czasy bez i z wątkami , przyspieszenie
+        //testy kilka razy
         public Bitmap ZnajdzKolorWatki() //Daga
         {
             Bitmap newImg = new Bitmap(Img);
@@ -200,9 +216,9 @@ namespace ZZ
         {
             int pixelR, pixelG, pixelB;
             float hue = c.GetHue();
-            float sat = c.GetSaturation();
+            float sat = c.GetBrightness();
             float bri = c.GetBrightness();
-            if ((160 < hue && hue < 330 && bri > 0.30 && bri < 0.75 && sat > 0.35))
+            if (hue > MinHue && hue < MaxHue && bri > MinVal && sat > MinSat)
             // 160-300 jasny niebieski,niebieski, niebiesko-fioletowy
             {
                 pixelR = 0;
