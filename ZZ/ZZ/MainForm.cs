@@ -25,7 +25,7 @@ namespace ZZ
         {
             OpenFileDialog oknoWyboruPliku = new OpenFileDialog();
             oknoWyboruPliku.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-            oknoWyboruPliku.Filter = "Wszystkie obrazy|*.bmp;*.jpg;*.jpeg;*.png|"
+            oknoWyboruPliku.Filter = "Wszystkie obrazy|*.bmp;*.gif;*.jpg;*.jpeg;*.png|"
                                    + "BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png";
             oknoWyboruPliku.Title = "Wczytaj obraz";
             oknoWyboruPliku.RestoreDirectory = true;

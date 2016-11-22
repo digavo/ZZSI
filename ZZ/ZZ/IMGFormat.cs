@@ -26,7 +26,7 @@ namespace ZZ
         {
             Img = new Bitmap(str);
         }
-        private void RGBtoHSV(int r, int g, int b, out float Hue, out float Val, out float Sat)//Daga
+        private void RGBtoHSV(int r, int g, int b, out float Hue, out float Val, out float Sat)
         {
             float R = (float)r, G = (float)g, B = (float)b;
             float cmax = Math.Max(R, Math.Max(G, B));
@@ -48,7 +48,7 @@ namespace ZZ
             //System.Windows.Forms.MessageBox.Show("r:" + r + " g:" + g + " b:" + b + "\nR:" + R + " G:" + G + " B:" + B + "\nH:" + Hue + " V:" + Val + " Sa:" + Sat);
         }
 
-        private void ZnajdzKolor (byte[] tab, int x1, int y1, int x2, int y2, int width, int depth) //Daga
+        private void ZnajdzKolor (byte[] tab, int x1, int y1, int x2, int y2, int width, int depth) 
         {
             for (int i = x1; i < x2; i++)
             {
@@ -94,7 +94,7 @@ namespace ZZ
         }
         //raport tytuł, problem zarządzania opisać, i jak realizujemy, plik - opis, czasy bez i z wątkami , przyspieszenie
         //testy kilka razy
-        public Bitmap ZnajdzKolorWatki() //Daga
+        public Bitmap ZnajdzKolorWatki() 
         {
             Bitmap newImg = new Bitmap(Img);
             Rectangle rect = new Rectangle(0, 0, newImg.Width, newImg.Height);
