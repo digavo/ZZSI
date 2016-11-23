@@ -15,7 +15,7 @@ namespace ZZ
     {
         public Bitmap Img;
         public int MaxHue = 300, MinHue = 160;
-        public double MinVal = 0.20, MinSat = 0.20;
+        public double MinVal = 20, MinSat = 10;
 
         public Bitmap KoncowyImg; // obraz wynikowy 
         private static readonly object Imglock = new object(); // mechanizm lock
